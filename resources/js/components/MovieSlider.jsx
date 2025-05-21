@@ -185,7 +185,7 @@ export default function MovieSlider({ movies, code, currentName, sessionId }) {
                     
                     </div>
                 </div>
-                <div className='flex h-[300px] w-[1000px] overflow-x-scroll overflow-y-hidden z-0 px-[100px]' style={{scrollbarWidth: "none"}}>
+                <div className='flex h-[300px] w-[1000px] overflow-x-scroll overflow-y-hidden z-0 px-[100px]' style={{scrollbarWidth: "10px"}}>
 
                     <LayoutGroup>
                         <motion.div className="relative flex justify-center items-center h-full w-max">
