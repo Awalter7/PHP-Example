@@ -8,8 +8,6 @@ export default defineConfig({
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
-            // point the plugin at your public dev server URL:
-            devServer: 'https://smooth-maddalena-awalter7-721ca856.koyeb.app:5173',
         }),
         tailwindcss(),
         react(),
