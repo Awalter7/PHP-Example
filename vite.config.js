@@ -13,7 +13,6 @@ export default defineConfig({
             devServer: 'https://smooth-maddalena-awalter7-721ca856.koyeb.app:5173',
         }),
         react(),
-        devServer: 'https://smooth-maddalena-awalter7-721ca856.koyeb.app:5173'
     ],
     server: {
         host: '0.0.0.0',               // listen on all addrs
