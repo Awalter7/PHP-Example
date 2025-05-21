@@ -37,6 +37,7 @@ RUN npm ci
 
 # ─── 7) Expose port & launch your serve:dev command ──
 
+
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
