@@ -36,5 +36,5 @@ RUN php artisan package:discover --ansi
 RUN npm ci
 
 # ─── 7) Expose port & launch your serve:dev command ──
-EXPOSE 8080
+EXPOSE 8000
 ENTRYPOINT ["php","artisan","serve:dev"]
