@@ -42,5 +42,6 @@ COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 8000
+EXPOSE 5173 
 
-CMD ["php", "artisan", "serve:dev"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
