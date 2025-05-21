@@ -36,5 +36,8 @@ RUN php artisan package:discover --ansi
 RUN npm ci
 
 # ─── 7) Expose port & launch your serve:dev command ──
-EXPOSE 8080
-ENTRYPOINT ["php","artisan","serve:dev"]
+
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
