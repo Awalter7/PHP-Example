@@ -5,7 +5,4 @@ set -e
 # php artisan migrate --force &
 
 # 2) Start Laravel on 0.0.0.0:8080
-php artisan serve --host=0.0.0.0 --port=8000 &
-
-# 3) Start Vite
-npm run dev
+php artisan serve:dev --host=0.0.0.0 --port=8000 &
