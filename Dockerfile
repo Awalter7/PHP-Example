@@ -28,21 +28,20 @@ RUN composer install \
     --prefer-dist \
     --no-scripts
 
-# ─── 5) Install & build JS assets ─────────────────────
-COPY package.json package-lock.json ./
-RUN npm ci \
- && npm run build
-
-# ─── 6) Copy full app & run discovery ─────────────────
+# ─── 5) Copy full app & run discovery ────────────────
 COPY . .
 RUN php artisan package:discover --ansi
 
-# ─── 7) Copy & make your entrypoint executable ───────
+# ─── 6) JS deps ──────────────────────────────────────
+RUN npm ci
+
+# ─── 7) Expose port & launch your serve:dev command ──
+
+
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# ─── 8) Expose the port your entrypoint will bind to ──
 EXPOSE 8000
+EXPOSE 5173 
 
-# ─── 9) Launch your combined serve:dev script ─────────
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
