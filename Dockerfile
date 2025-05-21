@@ -19,7 +19,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
 WORKDIR /app
 
 # 3) Front-end deps & build (needs your Vite config + resources)
-COPY package.json package-lock.json vite.config.js postcss.config.js tailwind.config.js ./  
+COPY package.json package-lock.json vite.config.js
 COPY resources/js resources/css ./resources
 RUN npm ci \
  && npm run build
