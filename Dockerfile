@@ -1,47 +1,40 @@
-# ─── 1) Base PHP 8.2 + Node.js image ────────────────
+# 1) Base image + system deps
 FROM php:8.2-cli
 
-# ─── 2) System deps, Node/npm, PHP extensions ───────
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-      curl gnupg zip unzip libzip-dev git \
+      curl gnupg unzip libzip-dev git \
  && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
- && apt-get install -y nodejs \
- && docker-php-ext-configure zip \
+ && apt-get install -y nodejs zip \
  && docker-php-ext-install pdo_mysql zip \
  && rm -rf /var/lib/apt/lists/*
 
-# ─── 3) Composer (no memory limit) ───────────────────
+# 2) Composer
 ENV COMPOSER_ALLOW_SUPERUSER=1 \
     COMPOSER_MEMORY_LIMIT=-1
+
 RUN curl -sS https://getcomposer.org/installer | php -- \
      --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /app
 
-# ─── 4) Install PHP deps *without* scripts ───────────
+# 3) Front-end: install & build
+COPY package.json package-lock.json ./
+RUN npm ci \
+ && npm run build
+
+# 4) Back-end: install PHP deps
 COPY composer.json composer.lock ./
 RUN composer install \
     --no-dev \
     --optimize-autoloader \
     --no-interaction \
-    --prefer-dist \
-    --no-scripts
+    --prefer-dist
 
-# ─── 5) Copy full app & run discovery ────────────────
+# 5) Copy the rest of your app & do discovery
 COPY . .
 RUN php artisan package:discover --ansi
 
-# ─── 6) JS deps ──────────────────────────────────────
-RUN npm ci
-
-# ─── 7) Expose port & launch your serve:dev command ──
-
-
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
+# 6) Expose and start
 EXPOSE 8000
-EXPOSE 5173 
-
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
