@@ -18,12 +18,13 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
 
 WORKDIR /app
 
-# 3) Front-end: install & build
-COPY package.json package-lock.json ./
+# 3) Front-end deps & build (needs your Vite config + resources)
+COPY package.json package-lock.json vite.config.js postcss.config.js tailwind.config.js ./  
+COPY resources/js resources/css ./resources
 RUN npm ci \
  && npm run build
 
-# 4) Back-end: install PHP deps
+# 4) PHP deps
 COPY composer.json composer.lock ./
 RUN composer install \
     --no-dev \
@@ -31,10 +32,10 @@ RUN composer install \
     --no-interaction \
     --prefer-dist
 
-# 5) Copy the rest of your app & do discovery
+# 5) Copy rest of app & discover packages
 COPY . .
 RUN php artisan package:discover --ansi
 
-# 6) Expose and start
+# 6) Expose & run
 EXPOSE 8000
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
