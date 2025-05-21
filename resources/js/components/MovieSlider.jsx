@@ -26,7 +26,7 @@ export default function MovieSlider({ movies, code, currentName, sessionId }) {
         }
 
         // tell server to record it
-        fetch(`/session/${code}/update-approval`, {
+        fetch(`${window.location.origin}/session/${code}/update-approval`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',            // ← ensure JSON response
@@ -61,7 +61,7 @@ export default function MovieSlider({ movies, code, currentName, sessionId }) {
     useEffect(() => {
         const refreshParticipants = async () => {
             try {
-                const res = await fetch(`/session/${code}/participants`);
+                const res = await fetch(`${window.location.origin}/session/${code}/participants`);
 
                 if (!res.ok) throw new Error('Network error');
 

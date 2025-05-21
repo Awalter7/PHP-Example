@@ -39,31 +39,20 @@
 @endsection
 
 @push('scripts')
-<script>
-  document
-    .getElementById('join-session-btn')
-    .addEventListener('click', async () => {
-      const code = document
-        .getElementById('session-code-input')
-        .value
-        .trim();
-      const name = document
-        .getElementById('name-input')
-        .value
-        .trim();
+  <script>
+    document.getElementById('join-session-btn').addEventListener('click', async () => {
+      const code = document.getElementById('session-code-input').value.trim();
+      const name = document.getElementById('name-input').value.trim();
+      if (!code || !name) return alert('Please enter both a session code and your name.');
 
-      if (!code || !name) {
-        return alert('Please enter both a session code and your name.');
-      }
-
-      const res = await fetch(`/session/${code}/join`, {
+      const res = await fetch(`${window.location.origin}/session/${code}/join`, {
         method: 'POST',
         headers: {
           'X-CSRF-TOKEN': '{{ csrf_token() }}',
-          'Accept':       'application/json',
-          'Content-Type': 'application/json'
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name })
+        body: JSON.stringify({ name }),
       });
 
       if (!res.ok) {
@@ -71,9 +60,8 @@
         return alert(err.error || 'Failed to join session.');
       }
 
-      const { name: joinedName } = await res.json();
       // redirect into the session room
       window.location.href = `/session/${code}`;
     });
-</script>
+  </script>
 @endpush

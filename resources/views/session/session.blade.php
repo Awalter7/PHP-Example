@@ -39,7 +39,7 @@
 
     async function refreshParticipants() {
       try {
-        const res = await fetch(`/session/${code}/participants`);
+        const res = await fetch(`${window.location.origin}/session/${code}/participants`);
 
         if (!res.ok) throw new Error('Network error');
 

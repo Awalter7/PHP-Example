@@ -54,48 +54,53 @@
 
 @push('scripts')
 <script>
+  // grab these from Blade once at load-time
+  const providerId = {{ $providerId }};
+  const genreId    = {{ $genreId }};
+  // baseUrl will be "https://smooth-…koyeb.app" (or whatever host you're on)
+  const baseUrl = `${window.location.protocol}//${window.location.host}`;
+
   // 1) Generate code and display it
-  document.getElementById('gen-code-btn')
-    .addEventListener('click', async () => {
-      const url = `{{ route('provider.sessionCode', ['providerId' => $providerId, 'genreId' => $genreId]) }}`;
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'X-CSRF-TOKEN': '{{ csrf_token() }}',
-          'Accept':       'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({})
-      });
-      if (!res.ok) return alert('Failed to generate code');
-      const { code } = await res.json();
-      document.getElementById('session-code').textContent = code;
+  document.getElementById('gen-code-btn').addEventListener('click', async () => {
+    const url = `${baseUrl}/provider/${providerId}/genre/${genreId}/createSession/code`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        'Accept':       'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({})
     });
+    if (!res.ok) return alert('Failed to generate code');
+    const { code } = await res.json();
+    document.getElementById('session-code').textContent = code;
+  });
 
   // 2) Redirect when the "Join Session" button is clicked
-  document.getElementById('join-session-btn')
-    .addEventListener('click', async () => {                    // ← add async here
-      const code = document.getElementById('session-code').textContent.trim();
-      const name = document.getElementById('name-input').value.trim();
-      if (!code) return alert('Please generate a session code first.');
-      if (!name) return alert('Please enter a name first.');
+  document.getElementById('join-session-btn').addEventListener('click', async () => {
+    const code = document.getElementById('session-code').textContent.trim();
+    const name = document.getElementById('name-input').value.trim();
+    if (!code) return alert('Please generate a session code first.');
+    if (!name) return alert('Please enter a name first.');
 
-      const res = await fetch(`/session/${code}/join`, {
-        method: 'POST',
-        headers: {
-          'X-CSRF-TOKEN': '{{ csrf_token() }}',
-          'Accept':       'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name })
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        return alert(err.error || 'Failed to join session.');
-      }
-
-      window.location.href = `/session/${code}`;
+    const url = `${baseUrl}/session/${code}/join`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        'Accept':       'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name })
     });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      return alert(err.error || 'Failed to join session.');
+    }
+
+    // navigate on success
+    window.location.href = `${baseUrl}/session/${code}`;
+  });
 </script>
 @endpush
