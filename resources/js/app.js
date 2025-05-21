@@ -12,5 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const currentName = el.dataset.currentName;
   const sessionId = el.dataset.sessionid;
 
-  createRoot(el).render(<MovieSlider movies={movies} code={code} currentName={currentName} sessionId={sessionId}/>)
+  createRoot(el).render(
+    <MovieSlider 
+      movies={movies} 
+      code={code} 
+      currentName={currentName} 
+      sessionId={sessionId}
+    />
+  );
 })
