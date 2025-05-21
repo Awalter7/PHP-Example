@@ -1,41 +1,42 @@
-# ─── 1) Use PHP 8.2 ─────────────────────────────
+# 1) Base image with PHP 8.2
 FROM php:8.2-cli
 
-# ─── 2) Install system tools, Node.js/npm, PHP exts ───
+# 2) Install system deps, Node.js & npm, PHP extensions
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
       curl gnupg zip unzip libzip-dev git \
  && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
  && apt-get install -y nodejs \
  && docker-php-ext-configure zip \
- && docker-php-ext-install \
-      pdo_mysql \
-      zip \
+ && docker-php-ext-install pdo_mysql zip \
  && rm -rf /var/lib/apt/lists/*
 
-# ─── 3) Composer (unlimited memory for big projects) ───
+# 3) Install Composer globally (with unlimited memory)
 ENV COMPOSER_ALLOW_SUPERUSER=1 \
     COMPOSER_MEMORY_LIMIT=-1
 RUN curl -sS https://getcomposer.org/installer | php -- \
-     --install-dir=/usr/local/bin --filename=composer
+    --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /app
 
-# ─── 4) Install PHP deps ─────────────────────────────
+# 4) Copy only the files needed to run Composer (including artisan & bootstrap)
 COPY composer.json composer.lock ./
+COPY artisan bootstrap/ ./ 
+
+# 5) Run Composer (now that artisan exists)
 RUN composer install \
     --no-dev \
     --optimize-autoloader \
     --no-interaction \
     --prefer-dist
 
-# ─── 5) Install JS deps ──────────────────────────────
+# 6) Copy JS manifests & install npm deps
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# ─── 6) Copy the rest of your code ───────────────────
+# 7) Copy the rest of your application code
 COPY . .
 
-# ─── 7) Expose & run your serve:dev command ───────────
+# 8) Expose port & run your custom serve:dev
 EXPOSE 8080
 CMD ["php", "artisan", "serve:dev"]
