@@ -9,23 +9,22 @@ export default defineConfig({
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
+            // point the plugin at your public dev server URL:
+            devServer: 'https://smooth-maddalena-awalter7-721ca856.koyeb.app:5173',
         }),
         react(),
-
+        devServer: 'https://smooth-maddalena-awalter7-721ca856.koyeb.app:5173'
     ],
     server: {
-        host: '0.0.0.0',           // listen on all interfaces
-        port: 5173,                // match Vite’s default port
-        strictPort: true,          // fail if 5173 is taken
-        cors: {
-            origin: 'https://smooth-maddalena-awalter7-721ca856.koyeb.app',
-            methods: ['GET','POST'],
-            credentials: true,
-        },
+        host: '0.0.0.0',               // listen on all addrs
+        port: 5173,                    // default Vite port
+        strictPort: true,              // fail if 5173 is taken
+        cors: true,                    // enable CORS for all origins
+        origin: 'https://smooth-maddalena-awalter7-721ca856.koyeb.app:5173',
         hmr: {
-            protocol: 'wss',         // use secure websockets
+            protocol: 'wss',             // secure WS
             host: 'smooth-maddalena-awalter7-721ca856.koyeb.app',
-            port: 5173,
+            clientPort: 443,             // browser ws port
         },
     },
 });
